@@ -57,6 +57,19 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+//Define struct (TODO: Put this in header file)
+typedef struct{
+	uint8_t mode;
+	uint16_t delay;
+}Modes;
+
+static Modes modes[] = {
+		{1, 1000},
+		{2, 500},
+		{3, 100}
+};
+
+uint8_t currentMode = 0;
 /* USER CODE END 0 */
 
 /**
@@ -101,7 +114,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	  HAL_Delay(500);
+	  HAL_Delay(modes[currentMode].delay);
   }
   /* USER CODE END 3 */
 }
@@ -241,7 +254,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   UNUSED(GPIO_Pin);
 
   if(GPIO_Pin == GPIO_PIN_13){
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	  //TOGGLE LED: HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	  currentMode++;
+
+	  if(currentMode >= 3){
+		  currentMode = 0;
+	  }
   }
 
 }
