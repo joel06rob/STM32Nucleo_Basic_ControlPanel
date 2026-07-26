@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <string.h>
+#include "modes.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,12 +59,6 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-//Define struct (TODO: Put this in header file)
-typedef struct{
-	uint8_t mode;
-	uint16_t delay;
-}Modes;
-
 static Modes modes[] = {
 		{1, 1000},
 		{2, 500},
@@ -70,6 +66,8 @@ static Modes modes[] = {
 };
 
 uint8_t currentMode = 0;
+
+char modebuffer[50];
 /* USER CODE END 0 */
 
 /**
@@ -115,6 +113,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  HAL_Delay(modes[currentMode].delay);
+
   }
   /* USER CODE END 3 */
 }
@@ -140,8 +139,8 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 15;
-  RCC_OscInitStruct.PLL.PLLN = 216;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 180;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
@@ -248,6 +247,8 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+//Interrupt function - Handle mode change via B1
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   /* Prevent unused argument(s) compilation warning */
@@ -260,6 +261,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	  if(currentMode >= 3){
 		  currentMode = 0;
 	  }
+
+	  //Print current mode
+	  //TODO: Add a function to print the new mode (As this needs to be done for when the mode is changed via interrupt and also via UART command)
+	  sprintf(modebuffer, "Mode: %d\r\n", currentMode+1);
+	  HAL_UART_Transmit(&huart2, (uint8_t *)modebuffer, strlen(modebuffer), 1000);
+
   }
 
 }
