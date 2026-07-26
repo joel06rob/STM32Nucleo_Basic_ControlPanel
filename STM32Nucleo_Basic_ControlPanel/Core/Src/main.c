@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "modes.h"
+#include "uart_manager.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,7 +102,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  UART_Manager_DisplayCommands();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -265,9 +266,21 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	  //Print current mode
 	  //TODO: Add a function to print the new mode (As this needs to be done for when the mode is changed via interrupt and also via UART command)
 	  sprintf(modebuffer, "Mode: %d\r\n", currentMode+1);
-	  HAL_UART_Transmit(&huart2, (uint8_t *)modebuffer, strlen(modebuffer), 1000);
+	  UART_Manager_DisplayMode(modebuffer);
 
   }
+
+}
+
+void UART_Manager_DisplayMode(char *modebuffer){
+
+	HAL_UART_Transmit(&huart2, (uint8_t *)modebuffer, strlen(modebuffer), 1000);
+
+}
+
+void UART_Manager_DisplayCommands(){
+
+	HAL_UART_Transmit(&huart2, (uint8_t *)"Displaying Commands", strlen("Displaying Commands"), 1000);
 
 }
 /* USER CODE END 4 */
