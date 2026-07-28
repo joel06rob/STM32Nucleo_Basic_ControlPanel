@@ -59,14 +59,6 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-const char *commandList[] = {
-		"Control Panel Commands:\r\n",
-		"----------------------\r\n",
-		"help\r\n",
-		"m1\r\n",
-		"m2\r\n",
-		"m3\r\n"
-};
 
 static Modes modes[] = {
 		{1, 1000},
@@ -281,27 +273,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 }
 
-void UART_Manager_DisplayMode(char *modebuffer){
 
-	//Note: UART Type, buffer loc, length of data, delay
-	HAL_UART_Transmit(&huart2, (uint8_t *)modebuffer, strlen(modebuffer), HAL_MAX_DELAY);
-
-}
-
-void UART_Manager_DisplayCommands(){
-
-	//Display all commands
-	uint8_t numofcommandList = sizeof(commandList)/sizeof(commandList[0]);
-
-	for(uint8_t i = 0; i < numofcommandList; i++){
-
-		HAL_UART_Transmit(&huart2, (uint8_t *)commandList[i], strlen(commandList[i]), HAL_MAX_DELAY);
-
-	}
-
-
-
-}
 /* USER CODE END 4 */
 
 /**
